@@ -1,88 +1,143 @@
+#include <map>
+#include <algorithm>
 #include <LiquidCrystal_I2C.h>
-
-const int STcp = 27;
-const int SHcp = 26;
-const int DS = 25;
-
-const int potPins[] = {34, 35, 32};
-
-const int VRx = 34;
 
 TaskHandle_t ShiftTask;
 TaskHandle_t ScreenTask;
 TaskHandle_t JoystickTask;
+TaskHandle_t MixingTask;
 
 LiquidCrystal_I2C lcd(0x27,16,4);
 
-int levelState = 0;
-auto levelText = {"High", "Mid", "Low"};
+enum MixerLevel { LOWS, MIDS, HIGHS };
+enum ScreenRow { TOP, BOTTOM };
 
-int yVal = 0;
+class Pot {
+  public:
+    int pin;
+    int last;
 
-void setup() {
-  Serial.begin(9600);
+    Pot(int inputPin, int threshold) {
+      pin = inputPin;
+      last = 0;
+    }
 
-  // LED shift register
-  pinMode(STcp, OUTPUT);
-  pinMode(SHcp, OUTPUT);
-  pinMode(DS, OUTPUT);
+    int read(){
+      int total = 0;
 
-  // Screen
-  lcd.init();
-
-  lcd.backlight();
-
-  // xTaskCreatePinnedToCore(shiftRegisterLoop, "ShiftTask", 10000, NULL, 1, &ShiftTask, 0);
-  xTaskCreatePinnedToCore(screenLoop, "ScreenTask", 10000, NULL, 1, &ScreenTask, 1);
-  xTaskCreatePinnedToCore(joystickLoop, "JoystickTask", 10000, NULL, 1, &JoystickTask, 0);
-}
-
-void shiftRegisterLoop(void * pvParameters) {
-    int led = 1; 
-    for(;;){
-      for (int i=0; i<7; i++){
-        digitalWrite(STcp, LOW);
-        shiftOut(DS, SHcp, MSBFIRST, led);
-        digitalWrite(STcp, HIGH);
-        led <<= 1;
-        led %= B00100000;
+      for (int i = 0; i < 10; i++) {
+        total += analogRead(pin);
+        delayMicroseconds(200);
       }
+
+      last = total / 10;
+      return last;
+    }
+};
+
+class Mixer {
+  public:
+    static const int LEFT = 35;
+    static const int  RIGHT = 33;
+    static const int  POT_COUNT = 2;
+
+    MixerLevel level = MixerLevel::LOWS;
+    Pot pots[Mixer::POT_COUNT] = {
+      Pot(Mixer::LEFT, 100),
+      Pot(Mixer::RIGHT, 200)
+    };
+
+    void init(){
+      xTaskCreatePinnedToCore(taskEntry, "MixingTask", 10000, this, 1, &MixingTask, 0);
+    };
+
+    void checkPots(){
+      
+    };
+
+    static long potPercent(int val) {
+      return map(val, 0, 4095, 0, 100);
+    };
+
+  private:
+    void run() {
+      for(;;) {
+        int lPotLast = pots[0].last;
+        int rPotLast = pots[1].last;
+
+        int lPotNow = pots[0].read();
+        int rPotNow = pots[1].read();
+        int maxDelta = std::max(abs(lPotNow - lPotLast), abs(rPotNow - rPotLast));
+
+        if(maxDelta > 100) {
+          lcd.setCursor(0, 1);
+          lcd.print("                ");
+          lcd.setCursor(0, 1);
+
+          lcd.print("L:");
+          lcd.print(Mixer::potPercent(lPotNow));
+          lcd.print("%");
+          lcd.print("   ");
+
+          lcd.print("R:");
+          lcd.print(Mixer::potPercent(rPotNow));
+          lcd.print("%");
+        }
         vTaskDelay(100 / portTICK_PERIOD_MS);
+      }
     }
-  }
 
-void screenLoop(void *pvParameters) {
-  int lastDisplayedState = -1;
-  for(;;) {
-    if (lastDisplayedState != levelState) {
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print(*(levelText.begin() + levelState));
+    static void taskEntry(void *param) {
+      Mixer *self = static_cast<Mixer *>(param);
+      self->run();
+    };
+};
 
-      lastDisplayedState = levelState;
-    }
-    vTaskDelay(50 / portTICK_PERIOD_MS);
-  }
-}
+class Screen {
+  public:
+    std::map<MixerLevel, String> LevelText = {
+      {MixerLevel::LOWS, "Lows"},
+      {MixerLevel::MIDS, "Mids"},
+      {MixerLevel::HIGHS, "Highs"}
+    };
 
-void joystickLoop(void *pvParameters) {
-  bool moved = false;
+    void run(){
+      for(;;) {
+       
+      }
+    };
 
-  for(;;) {
-    yVal = analogRead(VRx);
-    Serial.write(yVal);
-    if (yVal < 1000 && !moved) {
-      levelState = (levelState == 0) ? 2 : levelState - 1;
-      moved = true;
-    } else if (yVal > 3000 && !moved) {
-      levelState = (levelState + 1) % 3;
-      moved = true;
-    } else if (yVal > 1500 && yVal < 2500) {
-      moved = false;
-    }
-    vTaskDelay(20 / portTICK_PERIOD_MS);
-  }
-}
+    void init(){
+      lcd.init();
+      lcd.backlight();
+
+      xTaskCreatePinnedToCore(taskEntry, "ScreenTask", 10000, this, 1, &ScreenTask, 1);
+    };
+
+    static void taskEntry(void *param) {
+      Screen *self = static_cast<Screen *>(param);
+      self->run();
+    };
+};
+
+class DJDeck {
+  private:
+    Mixer mixer;
+    Screen screen;
+
+  public:
+    void init(){
+      Serial.begin(115200);
+
+      screen.init();
+      mixer.init();
+    };
+};
+
+DJDeck decks;
+void setup() {
+  decks.init(); 
+};
 
 void loop() {
   
