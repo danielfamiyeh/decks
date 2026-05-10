@@ -16,4 +16,5 @@ private:
     static void taskEntry(void *param);
     void render(const SystemState& state);
     void renderMixer(const MixerState& mixer);
+    void renderJoystickDebug(const JoystickState& joystick);
 };

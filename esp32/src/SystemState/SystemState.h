@@ -3,8 +3,14 @@
 #include <Arduino.h>
 
 enum MixerLevel { LOWS, MIDS, HIGHS };
-enum ScreenMode { MIXER_VIEW, SETTINGS_VIEW };
-enum JoystickState { NONE, LEFT, RIGHT, UP, DOWN, SWITCH };
+enum ScreenMode { MIXER_VIEW, SETTINGS_VIEW, DEBUG_JOYSTICK_VIEW };
+
+struct JoystickState {
+    int x = -1;
+    int y = -1;
+    int btn = LOW;
+};
+
 struct MixerState {
     int leftPercent = 0;
     int rightPercent = 0;
@@ -13,7 +19,7 @@ struct MixerState {
 
 struct SystemState {
     MixerState mixer;
-    ScreenMode screenMode = MIXER_VIEW;
+    ScreenMode screenMode = DEBUG_JOYSTICK_VIEW;
     JoystickState joystickState;
     bool screenDirty = true;
 };

@@ -3,9 +3,14 @@
 
 class Joystick {
   public:
-    static const int SW_PIN = 5;
+    static const int SW_PIN = 4;
+    static const int VRx_PIN = 25;
 
-    void init();
+    // char* joystickTitles[3] = {"None", "Left", 'Right', ""};
+
+  void init();
+
+  void read();
 
   private:
     void run();

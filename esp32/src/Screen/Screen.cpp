@@ -28,6 +28,9 @@ void Screen::render(const SystemState& state) {
     if (state.screenMode == MIXER_VIEW) {
         renderMixer(state.mixer);
     }
+    if (state.screenMode == DEBUG_JOYSTICK_VIEW) {
+        renderJoystickDebug(state.joystickState);
+    }
 }
 
 void Screen::renderMixer(const MixerState& mixer) {
@@ -40,6 +43,15 @@ void Screen::renderMixer(const MixerState& mixer) {
     lcd.print("%   R:");
     lcd.print(mixer.rightPercent);
     lcd.print("%");
+}
+
+void Screen::renderJoystickDebug(const JoystickState& joystick) {
+    clearLine(0);
+    lcd.print("Debug: Joystick");
+
+    clearLine(1);
+    lcd.print("BTN: ");
+    lcd.print(joystick.btn);
 }
 
 void Screen::run() {
