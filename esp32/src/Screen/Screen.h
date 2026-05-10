@@ -5,6 +5,8 @@
 
 class Screen {
 public:
+    char* levelTitles[3] = {"Lows", "Mids", "Highs"};
+
     void init();
     void run();
 

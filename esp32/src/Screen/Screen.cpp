@@ -1,6 +1,7 @@
 #include "Screen.h"
 #include "../Shared/Shared.h"
 #include "../SystemState/SystemState.h"
+#include "../Mixer/Mixer.h"
 
 void Screen::clearLine(int row) {
     lcd.setCursor(0, row);
@@ -32,11 +33,7 @@ void Screen::render(const SystemState& state) {
 void Screen::renderMixer(const MixerState& mixer) {
     clearLine(0);
     lcd.print("Mode: ");
-
-    if (mixer.level == LOWS) lcd.print("Lows");
-    if (mixer.level == MIDS) lcd.print("Mids");
-    if (mixer.level == HIGHS) lcd.print("Highs");
-
+    lcd.print(Screen::levelTitles[mixer.level]);
     clearLine(1);
     lcd.print("L:");
     lcd.print(mixer.leftPercent);
@@ -65,7 +62,7 @@ void Screen::run() {
             render(snapshot);
         }
 
-        vTaskDelay(50 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 

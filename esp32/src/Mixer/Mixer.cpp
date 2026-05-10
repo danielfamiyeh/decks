@@ -2,19 +2,10 @@
 #include <algorithm>
 
 #include "../Shared/Shared.h"
-#include "../Screen/Screen.h"
 #include "../SystemState/SystemState.h"
 
 void Mixer::init() {
-    xTaskCreatePinnedToCore(
-        taskEntry,
-        "MixingTask",
-        10000,
-        this,
-        1,
-        &MixingTask,
-        0
-    );
+    xTaskCreatePinnedToCore(taskEntry, "MixingTask", 10000, this, 1, &MixingTask, 0);
 }
 
 long Mixer::potPercent(int val) {
@@ -39,6 +30,11 @@ void Mixer::run() {
             systemState.screenDirty = true;
 
             xSemaphoreGive(systemStateMutex);
+        }
+
+        if (systemState.joystick == SWITCH && systemState.screenMode == MIXER_VIEW) {
+            level += 1;
+            level %= 3;
         }
 
         vTaskDelay(20 / portTICK_PERIOD_MS);
