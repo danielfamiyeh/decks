@@ -33,7 +33,7 @@ void Mixer::run() {
         int rightDelta = abs(rPotNow - rPotLast);
         int maxDelta = std::max(leftDelta, rightDelta);
 
-        if (maxDelta > 100 && xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
+        if (maxDelta > 50 && xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
             systemState.mixer.leftPercent = Mixer::potPercent(lPotNow);
             systemState.mixer.rightPercent = Mixer::potPercent(rPotNow);
             systemState.screenDirty = true;
@@ -41,7 +41,7 @@ void Mixer::run() {
             xSemaphoreGive(systemStateMutex);
         }
 
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(20 / portTICK_PERIOD_MS);
     }
 }
 
