@@ -42,6 +42,13 @@ class Mixer {
     static const int  POT_COUNT = 2;
 
     MixerLevel level = MixerLevel::LOWS;
+
+    std::map<MixerLevel, String> LevelText = {
+      {MixerLevel::LOWS, "Lows"},
+      {MixerLevel::MIDS, "Mids"},
+      {MixerLevel::HIGHS, "Highs"}
+    };
+
     Pot pots[Mixer::POT_COUNT] = {
       Pot(Mixer::LEFT, 100),
       Pot(Mixer::RIGHT, 200)
@@ -67,20 +74,23 @@ class Mixer {
 
         int lPotNow = pots[0].read();
         int rPotNow = pots[1].read();
-        int maxDelta = std::max(abs(lPotNow - lPotLast), abs(rPotNow - rPotLast));
-
+        int leftDelta = abs(lPotNow - lPotLast);
+        int rightDelta = abs(rPotNow - rPotLast);
+        int maxDelta = std::max(leftDelta, rightDelta);
+        
         if(maxDelta > 100) {
-          lcd.setCursor(0, 1);
-          lcd.print("                ");
-          lcd.setCursor(0, 1);
+          // Move to screen task
+          Screen::clearLine(0);
+
+          Screen::clearLine(1);
 
           lcd.print("L:");
-          lcd.print(Mixer::potPercent(lPotNow));
+          lcd.print(Mixer::potPercent(leftDelta > 300 ? lPotNow : lPotLast));
           lcd.print("%");
           lcd.print("   ");
 
           lcd.print("R:");
-          lcd.print(Mixer::potPercent(rPotNow));
+          lcd.print(Mixer::potPercent(rightDelta > 300 ? rPotNow : rPotLast));
           lcd.print("%");
         }
         vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -95,11 +105,11 @@ class Mixer {
 
 class Screen {
   public:
-    std::map<MixerLevel, String> LevelText = {
-      {MixerLevel::LOWS, "Lows"},
-      {MixerLevel::MIDS, "Mids"},
-      {MixerLevel::HIGHS, "Highs"}
-    };
+    void clearLine(int row){
+      lcd.setCursor(0, i);
+      lcd.print("                ");
+      lcd.setCursor(0, i);
+    }
 
     void run(){
       for(;;) {
