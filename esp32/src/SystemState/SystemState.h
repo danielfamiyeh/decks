@@ -19,8 +19,9 @@ struct MixerState {
 
 struct SystemState {
     MixerState mixer;
-    ScreenMode screenMode = DEBUG_JOYSTICK_VIEW;
+    ScreenMode screenMode = MIXER_VIEW;
     JoystickState joystickState;
+    int screenToggle;
     bool screenDirty = true;
 };
 

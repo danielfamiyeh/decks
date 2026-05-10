@@ -2,6 +2,7 @@
 #include "../Shared/Shared.h"
 #include "../SystemState/SystemState.h"
 #include "../Mixer/Mixer.h"
+#include "../Joystick/Joystick.h"
 
 void Screen::clearLine(int row) {
     lcd.setCursor(0, row);
@@ -50,8 +51,8 @@ void Screen::renderJoystickDebug(const JoystickState& joystick) {
     lcd.print("Debug: Joystick");
 
     clearLine(1);
-    lcd.print("BTN: ");
-    lcd.print(joystick.btn);
+    lcd.print("vrX: ");
+    lcd.print(analogRead(Joystick::VRx_PIN));
 }
 
 void Screen::run() {
