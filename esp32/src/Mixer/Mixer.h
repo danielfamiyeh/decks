@@ -11,6 +11,7 @@ public:
     static const int LEFT = 35;
     static const int RIGHT = 33;
     static const int POT_COUNT = 2;
+    static const int MIXER_TASK_DELAY = 20;
 
     Pot pots[POT_COUNT] = {
         Pot(LEFT, 100),

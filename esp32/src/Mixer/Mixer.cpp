@@ -32,7 +32,7 @@ void Mixer::run() {
             xSemaphoreGive(systemStateMutex);
         }
 
-        vTaskDelay(20 / portTICK_PERIOD_MS);
+        vTaskDelay(Mixer::MIXER_TASK_DELAY / portTICK_PERIOD_MS);
     }
 }
 

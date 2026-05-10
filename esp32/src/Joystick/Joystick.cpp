@@ -11,6 +11,7 @@ void Joystick::init() {
 };
 
 void Joystick::run() {
+  ScreenMode screenModeStateMachine[2] = { MIXER_VIEW, SETTINGS_VIEW }
   for(;;) {
     int switchBtnState = digitalRead(Joystick::SW_PIN);
     int vrX = analogRead(Joystick::VRx_PIN);
@@ -20,8 +21,8 @@ void Joystick::run() {
     
     if(xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
       if(switchBtnState != systemState.joystickState.btn ||
-        abs(vrX - systemState.joystickState.x) > 100 ||
-        abs(vrY - systemState.joystickState.y) > 100 ||
+        abs(vrX - systemState.joystickState.x) > Joystick::JOYSTICK_THRESHOLD ||
+        abs(vrY - systemState.joystickState.y) > Joystick::JOYSTICK_THRESHOLD ||
         screenToggleState != systemState.screenToggle
       ) {
         systemState.joystickState.x = vrX;
@@ -31,7 +32,7 @@ void Joystick::run() {
       }
       xSemaphoreGive(systemStateMutex);
   }
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(Joystick::JOYSTICK_TASK_DELAY / portTICK_PERIOD_MS);
   }
 };
 
