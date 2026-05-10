@@ -75,7 +75,7 @@ void Screen::run() {
             render(snapshot);
         }
 
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
 
