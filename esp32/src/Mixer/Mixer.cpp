@@ -3,6 +3,7 @@
 
 #include "../Shared/Shared.h"
 #include "../Screen/Screen.h"
+#include "../SystemState/SystemState.h"
 
 void Mixer::init() {
     xTaskCreatePinnedToCore(
@@ -32,16 +33,12 @@ void Mixer::run() {
         int rightDelta = abs(rPotNow - rPotLast);
         int maxDelta = std::max(leftDelta, rightDelta);
 
-        if (maxDelta > 100) {
-            Screen::clearLine(1);
+        if (maxDelta > 100 && xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
+            systemState.mixer.leftPercent = Mixer::potPercent(lPotNow);
+            systemState.mixer.rightPercent = Mixer::potPercent(rPotNow);
+            systemState.screenDirty = true;
 
-            lcd.print("L:");
-            lcd.print(Mixer::potPercent(leftDelta > 300 ? lPotNow : lPotLast));
-            lcd.print("%   ");
-
-            lcd.print("R:");
-            lcd.print(Mixer::potPercent(rightDelta > 300 ? rPotNow : rPotLast));
-            lcd.print("%");
+            xSemaphoreGive(systemStateMutex);
         }
 
         vTaskDelay(100 / portTICK_PERIOD_MS);

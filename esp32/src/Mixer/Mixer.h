@@ -3,8 +3,8 @@
 #include <Arduino.h>
 #include <map>
 #include "../Pot/Pot.h"
+#include "../SystemState/SystemState.h"
 
-enum MixerLevel { LOWS, MIDS, HIGHS };
 
 class Mixer {
 public:
