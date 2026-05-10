@@ -1,2 +1,5 @@
 */**/.pio
 */**/*.DS_STORE
+*/**/.vscode
+.vscode
+coverage

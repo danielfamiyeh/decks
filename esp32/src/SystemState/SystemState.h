@@ -4,7 +4,7 @@
 
 enum MixerLevel { LOWS, MIDS, HIGHS };
 enum ScreenMode { MIXER_VIEW, SETTINGS_VIEW };
-enum JoystickButton { NONE, LEFT, RIGHT, UP, DOWN, SWITCH };
+enum JoystickState { NONE, LEFT, RIGHT, UP, DOWN, SWITCH };
 struct MixerState {
     int leftPercent = 0;
     int rightPercent = 0;
@@ -14,7 +14,7 @@ struct MixerState {
 struct SystemState {
     MixerState mixer;
     ScreenMode screenMode = MIXER_VIEW;
-    JoystickButton joystick;
+    JoystickState joystickState;
     bool screenDirty = true;
 };
 

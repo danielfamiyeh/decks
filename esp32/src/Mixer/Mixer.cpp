@@ -32,9 +32,10 @@ void Mixer::run() {
             xSemaphoreGive(systemStateMutex);
         }
 
-        if (systemState.joystick == SWITCH && systemState.screenMode == MIXER_VIEW) {
-            level += 1;
-            level %= 3;
+        if (systemState.joystickState == SWITCH && systemState.screenMode == MIXER_VIEW) {
+            if (systemState.mixer.level == LOWS) systemState.mixer.level = MIDS;
+            else if (systemState.mixer.level == MIDS) systemState.mixer.level = HIGHS;
+            else if (systemState.mixer.level == HIGHS) systemState.mixer.level = LOWS;
         }
 
         vTaskDelay(20 / portTICK_PERIOD_MS);

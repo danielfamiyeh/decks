@@ -11,8 +11,6 @@ public:
     static const int LEFT = 35;
     static const int RIGHT = 33;
     static const int POT_COUNT = 2;
-    
-    int level = 0;
 
     Pot pots[POT_COUNT] = {
         Pot(LEFT, 100),

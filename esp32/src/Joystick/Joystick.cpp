@@ -8,16 +8,20 @@ void Joystick::init() {
 void Joystick::run() {
   for(;;) {
     int switchBtnState = digitalRead(Joystick::SW_PIN);
+ 
+    if(switchBtnState == HIGH) {
+      if(xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
+        systemState.joystickState = SWITCH;
+      }
+    }
 
-    if(xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
-      if(switchBtnState == HIGH) {
-        systemState.joystick = SWITCH;
+    else {
+      if(xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
+        systemState.joystickState = NONE;
       }
-      
-      else {
-        systemState.joystick = NONE;
-      }
-    } 
+    }
+
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 };
 
