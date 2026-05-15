@@ -1,11 +1,12 @@
 #pragma once
 
 #include <Arduino.h>
+#include <cstring>
 #include "../SystemState/SystemState.h"
 
 class Screen {
 public:
-    char* levelTitles[3] = {"Lows", "Mids", "Highs"};
+    const char* levelTitles[3] = {"Lows", "Mids", "Highs"};
 
     void init();
     void run();
@@ -13,8 +14,12 @@ public:
     static void clearLine(int row);
 
 private:
+    char lastRenderedRow0[17] = "";
+    char lastRenderedRow1[17] = "";
+
     static void taskEntry(void *param);
+    void renderLine(int row, const char* text);
     void render(const SystemState& state);
-    void renderMixer(const MixerState& mixer);
-    void renderJoystickDebug(const JoystickState& joystick);
+    void renderMixer(const SystemState& state);
+    void renderJoystickDebug(const SystemState& state);
 };

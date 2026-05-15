@@ -14,20 +14,21 @@ long Mixer::potPercent(int val) {
 
 void Mixer::run() {
     for (;;) {
-        int lPotLast = pots[0].last;
-        int rPotLast = pots[1].last;
-
         int lPotNow = pots[0].read();
         int rPotNow = pots[1].read();
 
-        int leftDelta = abs(lPotNow - lPotLast);
-        int rightDelta = abs(rPotNow - rPotLast);
-        int maxDelta = std::max(leftDelta, rightDelta);
+        int leftPercentNow = Mixer::potPercent(lPotNow);
+        int rightPercentNow = Mixer::potPercent(rPotNow);
 
-        if (maxDelta > 50 && xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
-            systemState.mixer.leftPercent = Mixer::potPercent(lPotNow);
-            systemState.mixer.rightPercent = Mixer::potPercent(rPotNow);
-            systemState.screenDirty = true;
+        if (xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
+            bool leftChanged = systemState.mixer.leftPercent != leftPercentNow;
+            bool rightChanged = systemState.mixer.rightPercent != rightPercentNow;
+
+            if (leftChanged || rightChanged) {
+                systemState.mixer.leftPercent = leftPercentNow;
+                systemState.mixer.rightPercent = rightPercentNow;
+                systemState.screenDirty = true;
+            }
 
             xSemaphoreGive(systemStateMutex);
         }

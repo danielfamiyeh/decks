@@ -6,6 +6,7 @@ void DJDeck::init() {
 
     systemStateMutex = xSemaphoreCreateMutex();
     joystick.init();
+    buttons.init();
     screen.init();
     mixer.init();
 }
