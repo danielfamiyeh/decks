@@ -21,12 +21,18 @@ void Mixer::run() {
         int rightPercentNow = Mixer::potPercent(rPotNow);
 
         if (xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
-            bool leftChanged = systemState.mixer.leftPercent != leftPercentNow;
-            bool rightChanged = systemState.mixer.rightPercent != rightPercentNow;
+            bool leftChanged = abs(systemState.mixer.leftPercent - leftPercentNow) > Pot::POT_THRESHOLD;
+            bool rightChanged = abs(systemState.mixer.rightPercent - rightPercentNow) > Pot::POT_THRESHOLD;
+
+            if (leftChanged) {
+                systemState.mixer.leftPercent = leftPercentNow;
+            }
+
+            if (rightChanged) {
+                systemState.mixer.rightPercent = rightPercentNow;
+            }
 
             if (leftChanged || rightChanged) {
-                systemState.mixer.leftPercent = leftPercentNow;
-                systemState.mixer.rightPercent = rightPercentNow;
                 systemState.screenDirty = true;
             }
 
