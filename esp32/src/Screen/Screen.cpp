@@ -53,7 +53,7 @@ void Screen::renderMixer(const SystemState& state) {
     char row1[17];
 
     snprintf(row0, sizeof(row0), "Level: %-8s", Screen::levelTitles[state.mixer.viewState]);
-    snprintf(row1, sizeof(row1), "L:%3d%% R:%3d%%", state.mixer.leftPercent, state.mixer.rightPercent);
+    snprintf(row1, sizeof(row1), "L:%03d%% R:%03d%%", state.mixer.leftPercent, state.mixer.rightPercent);
 
     renderLine(0, row0);
     renderLine(1, row1);
