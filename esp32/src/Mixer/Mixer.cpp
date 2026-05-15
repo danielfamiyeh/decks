@@ -8,8 +8,9 @@ void Mixer::init() {
     xTaskCreatePinnedToCore(taskEntry, "MixingTask", 10000, this, 1, &MixingTask, 0);
 }
 
-long Mixer::potPercent(int val) {
-    return map(val, 0, 4095, 0, 100);
+long Mixer::potPercent(int val, int minVal, int maxVal) {
+    int constrainedVal = constrain(val, minVal, maxVal);
+    return map(constrainedVal, minVal, maxVal, 0, 100);
 }
 
 void Mixer::run() {
@@ -17,8 +18,8 @@ void Mixer::run() {
         int lPotNow = pots[0].read();
         int rPotNow = pots[1].read();
 
-        int leftPercentNow = Mixer::potPercent(lPotNow);
-        int rightPercentNow = Mixer::potPercent(rPotNow);
+        int leftPercentNow = Mixer::potPercent(lPotNow, Mixer::LEFT_MIN, Mixer::LEFT_MAX);
+        int rightPercentNow = Mixer::potPercent(rPotNow, Mixer::RIGHT_MIN, Mixer::RIGHT_MAX);
 
         if (xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
             bool leftChanged = abs(systemState.mixer.leftPercent - leftPercentNow) > Pot::POT_THRESHOLD;
