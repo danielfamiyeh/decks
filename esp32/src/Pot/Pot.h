@@ -6,6 +6,8 @@ class Pot {
     int pin;
     int last;
 
-    Pot(int inputPin, int threshold);
+    static const int POT_THRESHOLD = 10;
+
+    Pot(int inputPin);
     int read();
 };
