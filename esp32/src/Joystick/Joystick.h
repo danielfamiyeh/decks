@@ -7,7 +7,7 @@ class Joystick {
     static const int VRx_PIN = 25;
     static const int VRy_PIN = 4;
     static const int JOYSTICK_THRESHOLD = 100;
-    static const int JOYSTICK_TASK_DELAY = 100;
+    static const int JOYSTICK_TASK_DELAY = 1;
 
     // char* joystickTitles[3] = {"None", "Left", 'Right', ""};
 

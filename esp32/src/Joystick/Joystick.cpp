@@ -18,12 +18,23 @@ void Joystick::run() {
  
     
     if(xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
-      if(switchBtnState != systemState.joystickState.btn ||
-        abs(vrX - systemState.joystickState.x) > Joystick::JOYSTICK_THRESHOLD ||
-        abs(vrY - systemState.joystickState.y) > Joystick::JOYSTICK_THRESHOLD
+      if(
+        abs(vrX - systemState.joystickState.x) > Joystick::JOYSTICK_THRESHOLD
+        // || abs(vrY - systemState.joystickState.y) > Joystick::JOYSTICK_THRESHOLD
       ) {
         systemState.joystickState.x = vrX;
         systemState.screenDirty = true;
+
+        if(vrX < 500 && systemState.joystickState != JOYSTICK_UP) {
+          systemState.joystickState = JOYSTICK_UP
+        }
+
+        else if (vrX > 3000 && systemState.joystickState != JOYSTICK_DOWN) {
+          systemState.joystickState = JOYSTICK_DOWN;
+        }
+        else {
+          systemState.joystickState = JOYSTICK_NULL;
+        }
       }
       xSemaphoreGive(systemStateMutex);
   }

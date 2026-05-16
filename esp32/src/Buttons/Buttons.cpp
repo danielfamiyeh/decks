@@ -14,7 +14,6 @@ void Buttons::run(){
     bool isPressed = buttonState == LOW;
 
     if(xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
-      systemState.buttonTaskTicks++;
       bool buttonChanged = systemState.modeButtonState != buttonState;
       systemState.modeButtonState = buttonState;
 
