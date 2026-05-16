@@ -19,22 +19,28 @@ void Joystick::run() {
     
     if(xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
       if(
-        abs(vrX - systemState.joystickState.x) > Joystick::JOYSTICK_THRESHOLD
+        abs(vrX - systemState.joystickState.x) > Joystick::JOYSTICK_THRESHOLD &&
+        !systemState.joystickState.isLocked
         // || abs(vrY - systemState.joystickState.y) > Joystick::JOYSTICK_THRESHOLD
       ) {
         systemState.joystickState.x = vrX;
         systemState.screenDirty = true;
 
-        if(vrX < 1100 && systemState.joystickState.direction != JOYSTICK_UP) {
+        if(vrX < 1200) {
           systemState.joystickState.direction = JOYSTICK_UP;
+          systemState.joystickState.isLocked = true;
         }
 
         // else if (vrX > 3000 && systemState.joystickState.direction != JOYSTICK_DOWN) {
         //   systemState.joystickState.direction = JOYSTICK_DOWN;
-        // }
-        else {
-          systemState.joystickState.direction = JOYSTICK_NULL;
-        }
+        // }   
+      }
+
+      else {
+          if (vrX > 1200 && vrX < 3000) {
+            systemState.joystickState.direction = JOYSTICK_NULL;
+            systemState.joystickState.isLocked = false;
+          }
       }
       xSemaphoreGive(systemStateMutex);
   }
