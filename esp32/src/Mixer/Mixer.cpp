@@ -37,6 +37,19 @@ void Mixer::run() {
                 systemState.screenDirty = true;
             }
 
+            if (systemState.joystickState.direction == JOYSTICK_UP) {
+                systemState.mixer.viewState = static_cast<MixerViewState>(static_cast<int>(systemState.mixer.viewState + 1) % Mixer::NUM_MIXER_LEVELS);
+            }
+
+            // else if (systemState.joystickState.direction == JOYSTICK_DOWN) {
+            //     systemState.mixer.viewState = static_cast<MixerViewState>(static_cast<int>(systemState.mixer.viewState - 1 + Mixer::NUM_MIXER_LEVELS) % Mixer::NUM_MIXER_LEVELS);
+            // }
+
+            // else if (systemState.joystickState == JOYSTICK_DOWN) {
+            //     systemState.mixer.viewState -= 1;
+            //     systemState.mixer.viewState %= Mixer::NUM_MIXER_LEVELS;
+            // }
+
             xSemaphoreGive(systemStateMutex);
         }
 

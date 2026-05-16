@@ -25,15 +25,15 @@ void Joystick::run() {
         systemState.joystickState.x = vrX;
         systemState.screenDirty = true;
 
-        if(vrX < 500 && systemState.joystickState != JOYSTICK_UP) {
-          systemState.joystickState = JOYSTICK_UP
+        if(vrX < 1100 && systemState.joystickState.direction != JOYSTICK_UP) {
+          systemState.joystickState.direction = JOYSTICK_UP;
         }
 
-        else if (vrX > 3000 && systemState.joystickState != JOYSTICK_DOWN) {
-          systemState.joystickState = JOYSTICK_DOWN;
-        }
+        // else if (vrX > 3000 && systemState.joystickState.direction != JOYSTICK_DOWN) {
+        //   systemState.joystickState.direction = JOYSTICK_DOWN;
+        // }
         else {
-          systemState.joystickState = JOYSTICK_NULL;
+          systemState.joystickState.direction = JOYSTICK_NULL;
         }
       }
       xSemaphoreGive(systemStateMutex);

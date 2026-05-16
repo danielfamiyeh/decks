@@ -5,13 +5,13 @@
 enum ScreenMode { MIXER_MODE, SETTINGS_MODE };
 enum MixerViewState { MIXER_LOWS, MIXER_MIDS, MIXER_HIGHS };
 enum SettingsViewState { DEBUG_JOYSTICK, DEBUG_POTS };
-enum JoystickButtonDirection { JOYSTICK_NULL, JOYSTICK_UP, JOYSTICK_DOWN, JOYSTICK_LEFT, JOYSTICK_RIGHT };
+enum JoystickDirection { JOYSTICK_NULL, JOYSTICK_UP, JOYSTICK_DOWN, JOYSTICK_LEFT, JOYSTICK_RIGHT };
 
 struct JoystickState {
     int x = -1;
     int y = -1;
     int btn = LOW;
-    JoystickButtonDirection joystickBtn = JOYSTICK_NULL;
+    JoystickDirection direction = JOYSTICK_NULL;
 };
 
 struct MixerState {

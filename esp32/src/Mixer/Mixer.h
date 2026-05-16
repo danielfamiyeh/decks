@@ -16,6 +16,7 @@ public:
     static const int LEFT_MAX = 4095;
     static const int RIGHT_MIN = 0;
     static const int RIGHT_MAX = 4095;
+    static const int NUM_MIXER_LEVELS = 3;
 
     Pot pots[POT_COUNT] = {
         Pot(LEFT),
