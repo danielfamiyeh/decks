@@ -18,6 +18,8 @@ struct JoystickState {
 struct MixerEQ {
     int leftPercent = 0;
     int rightPercent = 0;
+    bool leftIsCaught;
+    bool rightIsCaught;
 };
 
 struct MixerState {

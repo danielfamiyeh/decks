@@ -9,8 +9,10 @@ void Mixer::init() {
 }
 
 long Mixer::potPercent(int val, int minVal, int maxVal) {
-    int constrainedVal = constrain(val, minVal, maxVal);
-    return map(constrainedVal, minVal, maxVal, 0, 100);
+    int percent = map(val, 0, 4095, 0, 100);
+    percent = constrain(percent, 0, 100);
+
+    return percent;
 }
 
 void Mixer::run() {
@@ -20,18 +22,33 @@ void Mixer::run() {
 
         int leftPercentNow = Mixer::potPercent(lPotNow, Mixer::LEFT_MIN, Mixer::LEFT_MAX);
         int rightPercentNow = Mixer::potPercent(rPotNow, Mixer::RIGHT_MIN, Mixer::RIGHT_MAX);
+        
         int eqIdx = static_cast<int>(systemState.mixer.level);
+        
+        MixerEQ *systemMixerEq = &systemState.mixer.eq[eqIdx];
 
         if (xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
             bool leftChanged = abs(systemState.mixer.eq[eqIdx].leftPercent - leftPercentNow) > Pot::POT_THRESHOLD;
             bool rightChanged = abs(systemState.mixer.eq[eqIdx].rightPercent - rightPercentNow) > Pot::POT_THRESHOLD;
 
-            if (leftChanged) {
-                systemState.mixer.eq[eqIdx].leftPercent = leftPercentNow;
+            if(abs(leftPercentNow - systemMixerEq->leftPercent) <= 20) {
+                systemMixerEq->leftIsCaught = true;
+            } else {
+                systemMixerEq->leftIsCaught = false;
             }
 
-            if (rightChanged) {
-                systemState.mixer.eq[eqIdx].rightPercent = rightPercentNow;
+            if(abs(rightPercentNow - systemMixerEq->rightPercent) <= 20) {
+                systemMixerEq->rightIsCaught = true;
+            } else {
+                systemMixerEq->rightIsCaught = false;
+            }
+
+            if (leftChanged && systemMixerEq->leftIsCaught) {
+                systemMixerEq->leftPercent = leftPercentNow;
+            }
+
+            if (rightChanged && systemMixerEq->rightIsCaught) {
+                systemMixerEq->rightPercent = rightPercentNow;
             }
 
             if (leftChanged || rightChanged) {
@@ -47,15 +64,6 @@ void Mixer::run() {
                 systemState.joystickState.direction = JOYSTICK_NULL;
                 systemState.mixer.level = static_cast<MixerLevel>(((eqIdx - 1) % Mixer::NUM_MIXER_LEVELS + 3) % Mixer::NUM_MIXER_LEVELS);
             }
-
-            // else if (systemState.joystickState.direction == JOYSTICK_DOWN) {
-            //     systemState.mixer.viewState = static_cast<MixerViewState>(static_cast<int>(systemState.mixer.viewState - 1 + Mixer::NUM_MIXER_LEVELS) % Mixer::NUM_MIXER_LEVELS);
-            // }
-
-            // else if (systemState.joystickState == JOYSTICK_DOWN) {
-            //     systemState.mixer.viewState -= 1;
-            //     systemState.mixer.viewState %= Mixer::NUM_MIXER_LEVELS;
-            // }
 
             xSemaphoreGive(systemStateMutex);
         }

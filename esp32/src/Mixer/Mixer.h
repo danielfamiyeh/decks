@@ -12,9 +12,9 @@ public:
     static const int RIGHT = 34;
     static const int POT_COUNT = 2;
     static const int MIXER_TASK_DELAY = 20;
-    static const int LEFT_MIN = 0;
+    static const int LEFT_MIN = 172;
     static const int LEFT_MAX = 4095;
-    static const int RIGHT_MIN = 0;
+    static const int RIGHT_MIN = 172;
     static const int RIGHT_MAX = 4095;
     static const int NUM_MIXER_LEVELS = 3;
 
