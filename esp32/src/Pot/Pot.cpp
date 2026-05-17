@@ -6,10 +6,7 @@ Pot::Pot(int inputPin) {
 }
 
 int Pot::read() {
-    int raw = analogRead(pin);
     delayMicroseconds(200);
-
-    Serial.println(raw);
 
     int total = 0;
     const int sampleCount = 4;
