@@ -1,5 +1,5 @@
 # Miniature DJ Decks?
-I'm not entirely sure what this will be but I have and ESP32, STM32 Nucleo and another STM F440RE or something, and some other components.
+I'm not entirely sure what this will be but I have and ESP32, STM32 Nucleo, another smaller STM board, and some other components.
 The idea is that I'm gonna build a miniature set of DJ decks, constrained to the few components I have now.
 
 So ESP32 will drive UI, IO inputs, Bluetooth and I'll write some DSP firmware for the STM32 to send to an op-amp circuit and then stero speakers.
