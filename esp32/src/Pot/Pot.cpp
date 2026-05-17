@@ -6,6 +6,9 @@ Pot::Pot(int inputPin) {
 }
 
 int Pot::read() {
+    // ESP32 ADC channel switching can leak the previous channel into the next
+    // sample, so discard the first read and average the following samples.
+    analogRead(pin);
     delayMicroseconds(200);
 
     int total = 0;
