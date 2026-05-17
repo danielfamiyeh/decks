@@ -31,15 +31,23 @@ void Mixer::run() {
             bool leftChanged = abs(systemState.mixer.eq[eqIdx].leftPercent - leftPercentNow) > Pot::POT_THRESHOLD;
             bool rightChanged = abs(systemState.mixer.eq[eqIdx].rightPercent - rightPercentNow) > Pot::POT_THRESHOLD;
 
-            if(abs(leftPercentNow - systemMixerEq->leftPercent) <= 20) {
+            int leftPotDrift = leftPercentNow - systemMixerEq->leftPercent;
+            int rightPotDrift = rightPercentNow - systemMixerEq->rightPercent;
+
+            if(abs(leftPotDrift) <= 20) {
                 systemMixerEq->leftIsCaught = true;
+                systemMixerEq->leftDriftDir = 0;
             } else {
+                systemMixerEq->leftDriftDir = leftPotDrift < 0 ? -1 : 1;
                 systemMixerEq->leftIsCaught = false;
+                
             }
 
-            if(abs(rightPercentNow - systemMixerEq->rightPercent) <= 20) {
+            if(abs(rightPotDrift) <= 20) {
                 systemMixerEq->rightIsCaught = true;
+                systemMixerEq->rightDriftDir = 0;
             } else {
+                systemMixerEq->leftDriftDir = rightPotDrift < 0 ? -1 : 1;
                 systemMixerEq->rightIsCaught = false;
             }
 
