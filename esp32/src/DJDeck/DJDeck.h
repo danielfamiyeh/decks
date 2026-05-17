@@ -5,6 +5,7 @@
 #include "../Screen/Screen.h"
 #include "../Joystick/Joystick.h"
 #include "../Buttons/Buttons.h"
+#include "../UltrasonicSensor/UltrasonicSensor.h"
 
 class DJDeck {
 private:
@@ -12,6 +13,7 @@ private:
     Screen screen;
     Joystick joystick;
     Buttons buttons;
+    UltrasonicSensor ultrasonicSensor;
 
 public:
     void init();
