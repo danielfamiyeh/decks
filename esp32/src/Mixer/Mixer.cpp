@@ -45,7 +45,7 @@ void Mixer::run() {
 
             if (systemState.joystickState.direction == JOYSTICK_DOWN) {
                 systemState.joystickState.direction = JOYSTICK_NULL;
-                systemState.mixer.level = static_cast<MixerLevel>((eqIdx - 1) % Mixer::NUM_MIXER_LEVELS);
+                systemState.mixer.level = static_cast<MixerLevel>(((eqIdx - 1) % Mixer::NUM_MIXER_LEVELS + 3) % Mixer::NUM_MIXER_LEVELS);
             }
 
             // else if (systemState.joystickState.direction == JOYSTICK_DOWN) {
