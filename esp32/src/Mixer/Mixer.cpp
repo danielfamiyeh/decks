@@ -20,18 +20,18 @@ void Mixer::run() {
 
         int leftPercentNow = Mixer::potPercent(lPotNow, Mixer::LEFT_MIN, Mixer::LEFT_MAX);
         int rightPercentNow = Mixer::potPercent(rPotNow, Mixer::RIGHT_MIN, Mixer::RIGHT_MAX);
-        MixerEQ mixerLevel = systemState.mixer.eq[static_cast<int>(systemState.mixer.level)];
+        int eqIdx = static_cast<int>(systemState.mixer.level);
 
         if (xSemaphoreTake(systemStateMutex, portMAX_DELAY)) {
-            bool leftChanged = abs(mixerLevel.leftPercent - leftPercentNow) > Pot::POT_THRESHOLD;
-            bool rightChanged = abs(mixerLevel.rightPercent - rightPercentNow) > Pot::POT_THRESHOLD;
+            bool leftChanged = abs(systemState.mixer.eq[eqIdx].leftPercent - leftPercentNow) > Pot::POT_THRESHOLD;
+            bool rightChanged = abs(systemState.mixer.eq[eqIdx].rightPercent - rightPercentNow) > Pot::POT_THRESHOLD;
 
             if (leftChanged) {
-                mixerLevel.leftPercent = leftPercentNow;
+                systemState.mixer.eq[eqIdx].leftPercent = leftPercentNow;
             }
 
             if (rightChanged) {
-                mixerLevel.rightPercent = rightPercentNow;
+                systemState.mixer.eq[eqIdx].rightPercent = rightPercentNow;
             }
 
             if (leftChanged || rightChanged) {
@@ -40,7 +40,12 @@ void Mixer::run() {
 
             if (systemState.joystickState.direction == JOYSTICK_UP) {
                 systemState.joystickState.direction = JOYSTICK_NULL;
-                systemState.mixer.level = static_cast<MixerLevel>(static_cast<int>(systemState.mixer.level + 1) % Mixer::NUM_MIXER_LEVELS);
+                systemState.mixer.level = static_cast<MixerLevel>((eqIdx + 1) % Mixer::NUM_MIXER_LEVELS);
+            }
+
+            if (systemState.joystickState.direction == JOYSTICK_DOWN) {
+                systemState.joystickState.direction = JOYSTICK_NULL;
+                systemState.mixer.level = static_cast<MixerLevel>((eqIdx - 1) % Mixer::NUM_MIXER_LEVELS);
             }
 
             // else if (systemState.joystickState.direction == JOYSTICK_DOWN) {

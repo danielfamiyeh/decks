@@ -6,6 +6,8 @@
 
 class Screen {
 public:
+    static const int LINE_LENGTH = 16;
+
     const char* levelTitles[3] = {"Lows", "Mids", "Highs"};
 
     void init();

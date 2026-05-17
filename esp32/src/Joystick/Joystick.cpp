@@ -31,9 +31,10 @@ void Joystick::run() {
           systemState.joystickState.isLocked = true;
         }
 
-        // else if (vrX > 3000 && systemState.joystickState.direction != JOYSTICK_DOWN) {
-        //   systemState.joystickState.direction = JOYSTICK_DOWN;
-        // }   
+        if (vrX > 3000) {
+          systemState.joystickState.direction = JOYSTICK_DOWN;
+          systemState.joystickState.isLocked = true;
+        }   
       }
 
       else {

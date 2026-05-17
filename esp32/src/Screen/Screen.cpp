@@ -29,14 +29,14 @@ void Screen::init() {
 void Screen::renderLine(int row, const char* text) {
     char* lastRendered = (row == 0) ? lastRenderedRow0 : lastRenderedRow1;
 
-    if (strncmp(lastRendered, text, 16) == 0) {
+    if (strncmp(lastRendered, text, Screen::LINE_LENGTH) == 0) {
         return;
     }
 
     clearLine(row);
     lcd.print(text);
-    strncpy(lastRendered, text, 16);
-    lastRendered[16] = '\0';
+    strncpy(lastRendered, text, Screen::LINE_LENGTH);
+    lastRendered[Screen::LINE_LENGTH] = '\0';
 }
 
 void Screen::render(const SystemState& state) {
@@ -49,21 +49,21 @@ void Screen::render(const SystemState& state) {
 }
 
 void Screen::renderMixer(const SystemState& state) {
-    char row0[17];
-    char row1[17];
+    char row0[Screen::LINE_LENGTH + 1];
+    char row1[Screen::LINE_LENGTH + 1];
 
     int eqIdx = static_cast<int>(state.mixer.level);
 
     snprintf(row0, sizeof(row0), "Level: %-8s", Screen::levelTitles[eqIdx]);
-    snprintf(row1, sizeof(row1), "L:%03d%%    R:%03d%%", state.mixer.eq[eqIdx].leftPercent, state.mixer.eq[eqIdx].leftPercent);
+    snprintf(row1, sizeof(row1), "L:%03d%%    R:%03d%%", state.mixer.eq[eqIdx].leftPercent, state.mixer.eq[eqIdx].rightPercent);
 
     renderLine(0, row0);
     renderLine(1, row1);
 }
 
 void Screen::renderJoystickDebug(const SystemState& state) {
-    char row0[17];
-    char row1[17];
+    char row0[Screen::LINE_LENGTH + 1];
+    char row1[Screen::LINE_LENGTH + 1];
 
     snprintf(row0, sizeof(row0), "Debug: Joystick");
     snprintf(row1, sizeof(row1), "x:%4d y:%4d", state.joystickState.x, state.joystickState.y);
