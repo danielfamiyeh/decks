@@ -4,7 +4,7 @@
 
 enum ScreenMode { MIXER_MODE, SETTINGS_MODE };
 enum MixerLevel { MIXER_LOWS, MIXER_MIDS, MIXER_HIGHS };
-enum SettingsViewState { DEBUG_JOYSTICK, DEBUG_POTS };
+enum SettingsViewState { DEBUG_JOYSTICK, DEBUG_POTS, DEBUG_ULTRASONIC };
 enum JoystickDirection { JOYSTICK_NULL, JOYSTICK_UP, JOYSTICK_DOWN, JOYSTICK_LEFT, JOYSTICK_RIGHT };
 
 struct JoystickState {
@@ -16,8 +16,14 @@ struct JoystickState {
 };
 
 struct MixerEQ {
-    int leftPercent = 0;
-    int rightPercent = 0;
+    int leftPercent;
+    int rightPercent;
+
+    int leftDriftDir;
+    int rightDriftDir;
+
+    bool leftIsCaught;
+    bool rightIsCaught;
 };
 
 struct MixerState {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Arduino.h>
 #include <cstring>
+#include <Arduino.h>
 #include "../SystemState/SystemState.h"
 
 class Screen {

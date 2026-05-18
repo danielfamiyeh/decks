@@ -54,8 +54,24 @@ void Screen::renderMixer(const SystemState& state) {
 
     int eqIdx = static_cast<int>(state.mixer.level);
 
+    char leftDriftIndicator = ' ';
+    char rightDriftIndicator = ' ';
+
+    if(systemState.mixer.eq->leftDriftDir && !systemState.mixer.eq->leftIsCaught) {
+        leftDriftIndicator = systemState.mixer.eq->leftDriftDir < 0 ? '>' : '<';
+    }
+
+    if(systemState.mixer.eq->rightDriftDir && !systemState.mixer.eq->rightIsCaught) {
+        rightDriftIndicator = systemState.mixer.eq->rightDriftDir < 0 ? '>' : '<';
+    }
+
     snprintf(row0, sizeof(row0), "Level: %-8s", Screen::levelTitles[eqIdx]);
-    snprintf(row1, sizeof(row1), "L:%03d%%    R:%03d%%", state.mixer.eq[eqIdx].leftPercent, state.mixer.eq[eqIdx].rightPercent);
+    snprintf(row1, sizeof(row1), "L:%03d%%%c  R:%03d%%%c",
+    state.mixer.eq[eqIdx].leftPercent,
+    leftDriftIndicator,
+    state.mixer.eq[eqIdx].rightPercent,
+    rightDriftIndicator);
+    
 
     renderLine(0, row0);
     renderLine(1, row1);

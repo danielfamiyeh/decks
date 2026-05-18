@@ -9,4 +9,5 @@ void DJDeck::init() {
     buttons.init();
     screen.init();
     mixer.init();
+    ultrasonicSensor.init();
 }
